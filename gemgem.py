@@ -158,6 +158,10 @@ def runGame():
                 # this is the start of a mouse click or mouse drag
                 lastMouseDownX, lastMouseDownY = event.pos
 
+                mouse = pygame.mouse.get_pos()
+                if mouse[0] in range(600, 600 + 100) and mouse[1] in range(500, 500 + 30):
+                    print(" you press the text ")
+
         if clickedSpace and not firstSelectedGem:
             # This was the first gem clicked on.
             firstSelectedGem = clickedSpace
@@ -234,7 +238,6 @@ def runGame():
             score -= 1
             lastScoreDeduction = time.time()
         drawScore(score)
-        drawLogo()
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
@@ -547,14 +550,22 @@ def getBoardCopyMinusGems(board, gems):
 
 
 def drawScore(score):
-    scoreImg = BASICFONT.render(str(score), 1, SCORECOLOR)
-    scoreRect = scoreImg.get_rect()
-    scoreRect.bottomleft = (10, WINDOWHEIGHT - 6)
-    DISPLAYSURF.blit(scoreImg, scoreRect)
-
-def drawLogo():
     logoImage = pygame.image.load('logo.png')
     DISPLAYSURF.blit(logoImage, (600, 30))
+
+    scoreText = BASICFONT.render("SCORE:", 1, SCORECOLOR)
+    DISPLAYSURF.blit(scoreText, (600, 200))
+
+    scoreImg = BASICFONT.render(str(score), 1, SCORECOLOR)
+    scoreRect = scoreImg.get_rect()
+    #scoreRect.bottomleft = (10, WINDOWHEIGHT - 6)
+    DISPLAYSURF.blit(scoreImg, (600, 250))
+
+    hintText = BASICFONT.render("HINT", 1, SCORECOLOR)
+    DISPLAYSURF.blit(hintText, (600, 500))
+
+
+
 
 def drawHintButton():
     largeText = pygame.font.Font('freesansbold.ttf', 115)
