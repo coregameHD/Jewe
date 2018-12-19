@@ -40,7 +40,8 @@ DEDUCTSPEED = 0.8 # reduces score by 1 point every DEDUCTSPEED seconds.
 
 #             R    G    B
 PURPLE    = (255,   0, 255)
-LIGHTBLUE = (170, 190, 255)
+#LIGHTBLUE = (170, 190, 255)
+LIGHTBLUE = (193, 236, 250)
 BLUE      = (  0,   0, 255)
 RED       = (255, 100, 100)
 BLACK     = (  0,   0,   0)
@@ -79,7 +80,8 @@ def main():
     # GUI Elements
     #flags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.FULLSCREEN
     #game_window = pygame.display.set_mode((1280, 800), flags)
-    game_window = pygame.display.set_mode((1280, 800))
+    game_window = pygame.display.set_mode((800, 600))
+
 
     # Load the images
     GEMIMAGES = []
@@ -232,6 +234,7 @@ def runGame():
             score -= 1
             lastScoreDeduction = time.time()
         drawScore(score)
+        drawLogo()
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
@@ -549,6 +552,18 @@ def drawScore(score):
     scoreRect.bottomleft = (10, WINDOWHEIGHT - 6)
     DISPLAYSURF.blit(scoreImg, scoreRect)
 
+def drawLogo():
+    logoImage = pygame.image.load('logo.png')
+    DISPLAYSURF.blit(logoImage, (600, 30))
+
+def drawHintButton():
+    largeText = pygame.font.Font('freesansbold.ttf', 115)
+    TextSurf, TextRect = text_objects("A bit Racey", largeText)
+    TextRect.center = ((display_width / 2), (display_height / 2))
+    gameDisplay.blit(TextSurf, TextRect)
+
+    pygame.draw.rect(gameDisplay, green, (150, 450, 100, 50))
+    pygame.draw.rect(gameDisplay, red, (550, 450, 100, 50))
 
 if __name__ == '__main__':
     main()
