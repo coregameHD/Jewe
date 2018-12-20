@@ -232,9 +232,7 @@ def runGame():
         DISPLAYSURF.fill(BGCOLOR)
         drawBoard(gameBoard)
         if HintClicked:
-            highlightSpace2(0, 1)
-            highlightSpace2(1, 0)
-            highlightSpace2(2, 0)
+            HintHandler(gameBoard)
         if firstSelectedGem != None:
             highlightSpace(firstSelectedGem['x'], firstSelectedGem['y'])
             HintClicked = False
@@ -335,14 +333,44 @@ def canMakeMove(board):
                    (getGemAt(board, x+pat[0][1], y+pat[0][0]) == \
                     getGemAt(board, x+pat[1][1], y+pat[1][0]) == \
                     getGemAt(board, x+pat[2][1], y+pat[2][0]) != None):
-                    print('Pat = ', end="")
-                    print(pat)
-                    print(x)
-                    print(y)
-                    highlightSpace2(x, y)
+
+                    temp1 = ((x+pat[0][0], y+pat[0][1]), (x+pat[1][0], y+pat[1][1]), (x+pat[2][0], y+pat[2][1]))
+
                     return True # return True the first time you find a pattern
     return False
 
+def HintHandler(board):
+    oneOffPatterns = (((0,1), (1,0), (2,0)),
+                      ((0,1), (1,1), (2,0)),
+                      ((0,0), (1,1), (2,0)),
+                      ((0,1), (1,0), (2,1)),
+                      ((0,0), (1,0), (2,1)),
+                      ((0,0), (1,1), (2,1)),
+                      ((0,0), (0,2), (0,3)),
+                      ((0,0), (0,1), (0,3)))
+    for x in range(BOARDWIDTH):
+        for y in range(BOARDHEIGHT):
+            for pat in oneOffPatterns:
+                # check each possible pattern of "match in next move" to
+                # see if a possible move can be made.
+                if (getGemAt(board, x+pat[0][0], y+pat[0][1]) == \
+                    getGemAt(board, x+pat[1][0], y+pat[1][1]) == \
+                    getGemAt(board, x+pat[2][0], y+pat[2][1]) != None):
+                    HighlightHelper(x + pat[0][0], y + pat[0][1], x + pat[1][0], y + pat[1][1], x + pat[2][0],
+                                    y + pat[2][1])
+                    break
+
+                if(getGemAt(board, x+pat[0][1], y+pat[0][0]) == \
+                    getGemAt(board, x+pat[1][1], y+pat[1][0]) == \
+                    getGemAt(board, x+pat[2][1], y+pat[2][0]) != None):
+                    HighlightHelper(x + pat[0][1], y + pat[0][0], x + pat[1][1], y + pat[1][0], x + pat[2][1],
+                                    y + pat[2][0])
+                    break
+
+def HighlightHelper(x1, y1, x2, y2, x3, y3):
+    highlightSpace2(x1, y1)
+    highlightSpace2(x2, y2)
+    highlightSpace2(x3, y3)
 
 def drawMovingGem(gem, progress):
     # Draw a gem sliding in the direction that its 'direction' key
