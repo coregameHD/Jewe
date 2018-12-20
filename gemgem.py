@@ -40,13 +40,16 @@ DEDUCTSPEED = 0.8 # reduces score by 1 point every DEDUCTSPEED seconds.
 
 #             R    G    B
 PURPLE    = (255,   0, 255)
+PURPLE2   = (138,  43, 226)
 #LIGHTBLUE = (170, 190, 255)
 LIGHTBLUE = (193, 236, 250)
 BLUE      = (  0,   0, 255)
 RED       = (255, 100, 100)
 BLACK     = (  0,   0,   0)
 BROWN     = ( 85,  65,   0)
+ORANGE    = (255,  69,   0)
 HIGHLIGHTCOLOR = PURPLE # color of the selected gem's border
+HIGHLIGHTCOLOR2 = ORANGE # HINT COLOR
 BGCOLOR = LIGHTBLUE # background color on the screen
 GRIDCOLOR = BLUE # color of the game board
 GAMEOVERCOLOR = RED # color of the "Game over" text.
@@ -74,7 +77,7 @@ def main():
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
-    pygame.display.set_caption('Gemgem')
+    pygame.display.set_caption('Jewe: A Bejeweled clone')
     BASICFONT = pygame.font.Font('freesansbold.ttf', 36)
 
     # GUI Elements
@@ -161,6 +164,8 @@ def runGame():
                 mouse = pygame.mouse.get_pos()
                 if mouse[0] in range(600, 600 + 100) and mouse[1] in range(500, 500 + 30):
                     print(" you press the text ")
+                    pygame.mixer.Sound('match0.wav').play()
+                    highlightSpace2(3, 3)
 
         if clickedSpace and not firstSelectedGem:
             # This was the first gem clicked on.
@@ -183,6 +188,8 @@ def runGame():
 
             # See if this is a matching move.
             matchedGems = findMatchingGems(gameBoard)
+            print('MatchedGems = ', end="")
+            print(matchedGems)
             if matchedGems == []:
                 # Was not a matching move; swap the gems back
                 GAMESOUNDS['bad swap'].play()
@@ -322,6 +329,11 @@ def canMakeMove(board):
                    (getGemAt(board, x+pat[0][1], y+pat[0][0]) == \
                     getGemAt(board, x+pat[1][1], y+pat[1][0]) == \
                     getGemAt(board, x+pat[2][1], y+pat[2][0]) != None):
+                    print('Pat = ', end="")
+                    print(pat)
+                    print(x)
+                    print(y)
+                    highlightSpace2(x, y)
                     return True # return True the first time you find a pattern
     return False
 
@@ -438,6 +450,8 @@ def findMatchingGems(board):
 def highlightSpace(x, y):
     pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, BOARDRECTS[x][y], 4)
 
+def highlightSpace2(x, y): #Highlight color for HINT
+    pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR2, BOARDRECTS[x][y], 4)
 
 def getDroppingGems(board):
     # Find all the gems that have an empty space below them
@@ -561,20 +575,8 @@ def drawScore(score):
     #scoreRect.bottomleft = (10, WINDOWHEIGHT - 6)
     DISPLAYSURF.blit(scoreImg, (600, 250))
 
-    hintText = BASICFONT.render("HINT", 1, SCORECOLOR)
+    hintText = BASICFONT.render("HINT", 1, RED)
     DISPLAYSURF.blit(hintText, (600, 500))
-
-
-
-
-def drawHintButton():
-    largeText = pygame.font.Font('freesansbold.ttf', 115)
-    TextSurf, TextRect = text_objects("A bit Racey", largeText)
-    TextRect.center = ((display_width / 2), (display_height / 2))
-    gameDisplay.blit(TextSurf, TextRect)
-
-    pygame.draw.rect(gameDisplay, green, (150, 450, 100, 50))
-    pygame.draw.rect(gameDisplay, red, (550, 450, 100, 50))
 
 if __name__ == '__main__':
     main()
