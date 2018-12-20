@@ -132,6 +132,7 @@ def runGame():
     gameIsOver = False
     lastScoreDeduction = time.time()
     clickContinueTextSurf = None
+    HintClicked = None
 
     while True: # main game loop
         clickedSpace = None
@@ -165,7 +166,7 @@ def runGame():
                 if mouse[0] in range(600, 600 + 100) and mouse[1] in range(500, 500 + 30):
                     print(" you press the text ")
                     pygame.mixer.Sound('match0.wav').play()
-                    highlightSpace2(3, 3)
+                    HintClicked = True
 
         if clickedSpace and not firstSelectedGem:
             # This was the first gem clicked on.
@@ -230,8 +231,13 @@ def runGame():
         # Draw the board.
         DISPLAYSURF.fill(BGCOLOR)
         drawBoard(gameBoard)
+        if HintClicked:
+            highlightSpace2(0, 1)
+            highlightSpace2(1, 0)
+            highlightSpace2(2, 0)
         if firstSelectedGem != None:
             highlightSpace(firstSelectedGem['x'], firstSelectedGem['y'])
+            HintClicked = False
         if gameIsOver:
             if clickContinueTextSurf == None:
                 # Only render the text once. In future iterations, just
