@@ -1,8 +1,3 @@
-# Gemgem (a Bejeweled clone)
-# By Al Sweigart al@inventwithpython.com
-# http://inventwithpython.com/pygame
-# Released under a "Simplified BSD" license
-
 """
 This program has "gem data structures", which are basically dictionaries
 with the following keys:
@@ -17,6 +12,7 @@ with the following keys:
 
 import random, time, pygame, sys, copy
 from pygame.locals import *
+#from pyswip import Prolog
 
 FPS = 30 # frames per second to update the screen
 WINDOWWIDTH = 600  # width of the program's window, in pixels
@@ -40,17 +36,16 @@ DEDUCTSPEED = 0.8 # reduces score by 1 point every DEDUCTSPEED seconds.
 
 #             R    G    B
 PURPLE    = (255,   0, 255)
-PURPLE2   = (138,  43, 226)
-#LIGHTBLUE = (170, 190, 255)
 LIGHTBLUE = (193, 236, 250)
 BLUE      = (  0,   0, 255)
 RED       = (255, 100, 100)
 BLACK     = (  0,   0,   0)
 BROWN     = ( 85,  65,   0)
 ORANGE    = (255,  69,   0)
+WHITE     = (255, 255, 255)
 HIGHLIGHTCOLOR = PURPLE # color of the selected gem's border
-HIGHLIGHTCOLOR2 = ORANGE # HINT COLOR
-BGCOLOR = LIGHTBLUE # background color on the screen
+HINTCOLOR = ORANGE # color of hint's border
+BGCOLOR = WHITE # background color on the screen
 GRIDCOLOR = BLUE # color of the game board
 GAMEOVERCOLOR = RED # color of the "Game over" text.
 GAMEOVERBGCOLOR = BLACK # background color of the "Game over" text.
@@ -79,12 +74,7 @@ def main():
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     pygame.display.set_caption('Jewe: A Bejeweled clone')
     BASICFONT = pygame.font.Font('freesansbold.ttf', 36)
-
-    # GUI Elements
-    #flags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.FULLSCREEN
-    #game_window = pygame.display.set_mode((1280, 800), flags)
     game_window = pygame.display.set_mode((800, 600))
-
 
     # Load the images
     GEMIMAGES = []
@@ -164,7 +154,7 @@ def runGame():
 
                 mouse = pygame.mouse.get_pos()
                 if mouse[0] in range(600, 600 + 100) and mouse[1] in range(500, 500 + 30):
-                    print(" you press the text ")
+                    print("Hint clicked")
                     pygame.mixer.Sound('match0.wav').play()
                     HintClicked = True
 
@@ -340,6 +330,7 @@ def canMakeMove(board):
     return False
 
 def HintHandler(board):
+    # A function to handle hint
     oneOffPatterns = (((0,1), (1,0), (2,0)),
                       ((0,1), (1,1), (2,0)),
                       ((0,0), (1,1), (2,0)),
@@ -351,8 +342,6 @@ def HintHandler(board):
     for x in range(BOARDWIDTH):
         for y in range(BOARDHEIGHT):
             for pat in oneOffPatterns:
-                # check each possible pattern of "match in next move" to
-                # see if a possible move can be made.
                 if (getGemAt(board, x+pat[0][0], y+pat[0][1]) == \
                     getGemAt(board, x+pat[1][0], y+pat[1][1]) == \
                     getGemAt(board, x+pat[2][0], y+pat[2][1]) != None):
@@ -368,9 +357,10 @@ def HintHandler(board):
                     break
 
 def HighlightHelper(x1, y1, x2, y2, x3, y3):
-    highlightSpace2(x1, y1)
-    highlightSpace2(x2, y2)
-    highlightSpace2(x3, y3)
+    # Highlight a certain position ((x1,y1), (x2,y2), (x3,y3))
+    highlightHint(x1, y1)
+    highlightHint(x2, y2)
+    highlightHint(x3, y3)
 
 def drawMovingGem(gem, progress):
     # Draw a gem sliding in the direction that its 'direction' key
@@ -484,8 +474,8 @@ def findMatchingGems(board):
 def highlightSpace(x, y):
     pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR, BOARDRECTS[x][y], 4)
 
-def highlightSpace2(x, y): #Highlight color for HINT
-    pygame.draw.rect(DISPLAYSURF, HIGHLIGHTCOLOR2, BOARDRECTS[x][y], 4)
+def highlightHint(x, y):
+    pygame.draw.rect(DISPLAYSURF, HINTCOLOR, BOARDRECTS[x][y], 4)
 
 def getDroppingGems(board):
     # Find all the gems that have an empty space below them
@@ -598,15 +588,13 @@ def getBoardCopyMinusGems(board, gems):
 
 
 def drawScore(score):
-    logoImage = pygame.image.load('logo.png')
+    logoImage = pygame.image.load('logo_new.png')
     DISPLAYSURF.blit(logoImage, (600, 30))
 
     scoreText = BASICFONT.render("SCORE:", 1, SCORECOLOR)
     DISPLAYSURF.blit(scoreText, (600, 200))
 
     scoreImg = BASICFONT.render(str(score), 1, SCORECOLOR)
-    scoreRect = scoreImg.get_rect()
-    #scoreRect.bottomleft = (10, WINDOWHEIGHT - 6)
     DISPLAYSURF.blit(scoreImg, (600, 250))
 
     hintText = BASICFONT.render("HINT", 1, RED)
